@@ -40,7 +40,7 @@ object HelloWorldCallbacks extends Callbacks {
 }
 ```
 
-You'll notice there is a `job.``type`` match` which then returns an 
+You'll notice there is a `job.``type`` match...` which then returns an 
 anonymous function, like:
 
 ```scala
@@ -52,13 +52,17 @@ anonymous function, like:
 }
 ```
 
-Strictly-speaking you don't need the match statement and you could 
-return the anonymous function directly but it's good practice to check 
-the job type first before you return a callback for it. You also must
-add the job type to the `keys` function return too so the system knows
-you will deal with that particular job type. 
+...which forms an enclosure around the work you want to perform. 
 
-Scheduler Plus will execute this anonymous function when the job runs.
+Strictly-speaking you don't need the match statement and you could 
+return the anonymous function regardless of the `job.``type`` ` but 
+it's good practice to check the job type first before you return a 
+callback for it. You also must add the job type to the `keys` function 
+list too so the system knows you will deal with that particular job 
+type, otherwise Scheduler Plus will never deliver jobs to you, 
+regardless of what callbacks you have in the `callbackFor` function. 
+The anonymous function returned by `callbackFor` will be executed when 
+Scheduler Plus finds a matching job request.
 
 Then to start up the system you look up the actor and send these 
 callbacks to it, using an `ask`:

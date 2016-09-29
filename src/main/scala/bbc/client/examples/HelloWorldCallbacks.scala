@@ -6,7 +6,7 @@ import bbc.schedulerplus.Job
 import bbc.schedulerplus.client.{CallbackResponse, Callbacks}
 
 /**
-  * Mock callbacks for testing
+  * Sample Hello, World! callbacks
   */
 object HelloWorldCallbacks extends Callbacks {
   val log = Logging(AppContext.actorSystem, getClass)
@@ -16,6 +16,7 @@ object HelloWorldCallbacks extends Callbacks {
     job.`type` match {
       case "hello_world" => () => {
         log.debug("Hello, World! [" + job.id + "]")
+        // do something with the ID here
         CallbackResponse(lifetimeInMillis = 10000)
       }
     }
