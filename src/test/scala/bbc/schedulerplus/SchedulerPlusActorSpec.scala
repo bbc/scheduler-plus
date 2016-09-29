@@ -2,7 +2,7 @@ package bbc.schedulerplus
 
 import scala.concurrent.duration._
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
+import akka.testkit.{DefaultTimeout, ImplicitSender, TestActorRef, TestKit}
 import bbc.client.MockClientCallbacks
 import org.scalatest._
 
@@ -16,19 +16,33 @@ class SchedulerPlusActorSpec extends TestKit(ActorSystem("testSystem"))
     with Matchers
     with BeforeAndAfterAll {
 
-  val dataSyncActor = system.actorOf(Props(classOf[SchedulerPlusActor], testActor))
+  val schedulerPlusActor = TestActorRef[SchedulerPlusActor]
 
   override def afterAll {
     shutdown()
   }
 
   "A DataSyncActor" should {
-    "Start up when it recieves a callback message" in {
+    "Respond with STARTING when it recieves callbacks" in {
       within(500 millis) {
-        dataSyncActor ! MockClientCallbacks
+        schedulerPlusActor ! MockClientCallbacks
         expectMsg("STARTING")
       }
     }
-  }
 
+    "Respond with FAILED when it recieves an unknown type" in {
+      within(500 millis) {
+        schedulerPlusActor ! Some
+        expectMsg("FAILED")
+      }
+    }
+
+    "Respond with STOPPING when it recieves a stop message" in {
+      within(500 millis) {
+        schedulerPlusActor ! "stop"
+        expectMsg("STOPPING")
+      }
+    }
+
+  }
 }
