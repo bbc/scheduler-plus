@@ -1,10 +1,10 @@
-package bbc.schedulerplus
+package bbc.schedulerplus.system
 
 import akka.actor.Props
 import akka.event.Logging
 import bbc.AppContext
+import bbc.schedulerplus.Job
 import bbc.schedulerplus.client.Callbacks
-import bbc.schedulerplus.domain.Job
 import bbc.schedulerplus.persistence.JobsDao
 import bbc.schedulerplus.timing.ExecutionTimePoolManager
 import com.typesafe.config.ConfigFactory

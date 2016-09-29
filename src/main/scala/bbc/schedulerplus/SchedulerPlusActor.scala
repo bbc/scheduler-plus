@@ -2,6 +2,7 @@ package bbc.schedulerplus
 
 import akka.actor.{Actor, ActorLogging}
 import bbc.schedulerplus.client.Callbacks
+import bbc.schedulerplus.system.Monitor
 
 /**
   * Receives callbacks on application startup to begin the scheduler for jobs we wish to run

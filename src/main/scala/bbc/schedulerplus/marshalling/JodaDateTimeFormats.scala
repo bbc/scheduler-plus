@@ -1,4 +1,4 @@
-package bbc.schedulerplus.domain.marshalling
+package bbc.schedulerplus.marshalling
 
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat

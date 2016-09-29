@@ -1,4 +1,4 @@
-package bbc.schedulerplus.domain
+package bbc.schedulerplus
 
 /**
   * Represents a job request which triggers a scheduled job

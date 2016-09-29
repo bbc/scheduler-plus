@@ -1,7 +1,7 @@
 package bbc.client
 
+import bbc.schedulerplus.Job
 import bbc.schedulerplus.client.{CallbackResponse, Callbacks}
-import bbc.schedulerplus.domain.Job
 
 /**
   * Mock callbacks for testing

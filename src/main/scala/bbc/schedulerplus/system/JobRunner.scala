@@ -1,10 +1,11 @@
-package bbc.schedulerplus
+package bbc.schedulerplus.system
 
-import scala.concurrent.duration._
 import akka.actor.Actor
 import akka.event.Logging
 import bbc.AppContext
-import bbc.schedulerplus.domain.Job
+import bbc.schedulerplus.Job
+
+import scala.concurrent.duration._
 
 /**
   * AKKA Scheduler Actor which will execute the anonymous function 'callback()' after the job.lifetimeInMills has elapsed

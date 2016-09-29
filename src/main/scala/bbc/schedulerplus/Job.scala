@@ -1,4 +1,4 @@
-package bbc.schedulerplus.domain
+package bbc.schedulerplus
 
 /**
   * Represents a job which is the system response from a JobRequest

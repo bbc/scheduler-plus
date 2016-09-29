@@ -1,14 +1,13 @@
-package bbc.schedulerplus
+package bbc.schedulerplus.system
 
-import scala.concurrent.Future
 import akka.event.Logging
+import bbc.AppContext
+import bbc.schedulerplus.persistence.JobsDao
+import bbc.schedulerplus.{Job, JobRequest}
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, ISODateTimeFormat}
-import bbc.AppContext
-import bbc.schedulerplus.domain.{Job, JobRequest}
-import bbc.schedulerplus.persistence.JobsDao
 
-import scala.util.Success
+import scala.concurrent.Future
 
 /**
   * Manages all of the jobs

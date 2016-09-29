@@ -1,16 +1,16 @@
-package bbc.schedulerplus
+package bbc.schedulerplus.system
 
-import scala.concurrent.duration._
-import scala.util.{Failure, Success}
 import akka.actor.{Actor, Props}
 import akka.event.Logging
 import bbc.AppContext
 import bbc.schedulerplus.client.Callbacks
-import bbc.schedulerplus.domain.JobRequest
 import bbc.schedulerplus.timing.ExecutionTimePoolManager
+import bbc.schedulerplus.JobRequest
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 /**
   * Manages data syncing of objects

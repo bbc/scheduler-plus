@@ -1,7 +1,7 @@
-package bbc.schedulerplus.domain.marshalling
+package bbc.schedulerplus.marshalling
 
+import bbc.schedulerplus.{Job, JobRequest}
 import spray.json.{DefaultJsonProtocol, NullOptions}
-import bbc.schedulerplus.domain.{Job, JobRequest}
 
 /**
   * JSON format protocol for case classes
