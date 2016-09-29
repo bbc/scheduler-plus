@@ -85,7 +85,7 @@ that Scheduler Plus is listening to. This can be done, for Redis, by
 using:
 
 ```
-SET bbc.persistence.sync.JobRequest:the_job_type_123456 
+SET bbc.schedulerplus.domain.JobRequest:the_job_type_123456 
 "{\"type\":\"the_job_type\",\"id\":\"123456\",\"status\":\"live\"}"
 ```
 _(all on one line)_
@@ -127,7 +127,7 @@ Job requests can be set to any status at any time, by overwriting the
 job request in the cache, say with:
 
 ```
-SET bbc.persistence.sync.JobRequest:the_job_type_123456 
+SET bbc.schedulerplus.domain.JobRequest:the_job_type_123456 
 "{\"type\":\"the_job_type\",\"id\":\"123456\",\"status\":\"paused\"}"
 ```
 _(all on one line)_

@@ -8,6 +8,8 @@ import bbc.AppContext
 import bbc.schedulerplus.domain.{Job, JobRequest}
 import bbc.schedulerplus.persistence.JobsDao
 
+import scala.util.Success
+
 /**
   * Manages all of the jobs
   */

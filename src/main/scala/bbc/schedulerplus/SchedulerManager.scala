@@ -7,6 +7,7 @@ import bbc.schedulerplus.client.Callbacks
 import bbc.schedulerplus.domain.Job
 import bbc.schedulerplus.persistence.JobsDao
 import bbc.schedulerplus.timing.ExecutionTimePoolManager
+import com.typesafe.config.ConfigFactory
 
 /**
   * Manages the actual scheduling of jobs, creating an actor which will execute when the lifetimeInMillis elapses
@@ -16,6 +17,9 @@ object SchedulerManager {
   val log = Logging(system, getClass)
 
   import scala.concurrent.ExecutionContext.Implicits.global
+
+  lazy val config = ConfigFactory.load()
+  lazy val configInterval = config.getInt("monitor.interval_seconds")
 
   /**
     * Creates an anonymous function to make the actual calls to blur and insert into cache etc
@@ -32,8 +36,6 @@ object SchedulerManager {
           for { req <- r } yield {
             req.status match {
               case "live" => {
-                log.debug(job.toKey + " is LIVE so running and rescheduling for " + job.lifetimeInMillis + "ms")
-
                 val response = callbacks.callbackFor(job)()
 
                 val executionDelay =
@@ -41,6 +43,8 @@ object SchedulerManager {
                     `type` = job.`type`,
                     lifetimeInMillis = response.lifetimeInMillis
                   )
+
+                log.debug(job.toKey + " is LIVE so running and rescheduling for " + executionDelay + "ms")
 
                 val newJob = JobManager.updateJob(job, executionDelay)
                 SchedulerManager.schedule(newJob, callbacks)
@@ -50,8 +54,16 @@ object SchedulerManager {
                 JobManager.deleteJob(job)
               }
               case "paused" => {
-                log.debug(job.toKey + " is PAUSED so rescheduling for " + job.lifetimeInMillis + "ms")
-                SchedulerManager.schedule(job, callbacks)
+                // pause this for at least one polling cycle, avoids 'paused job thrashing'.
+                val executionDelay =
+                  ExecutionTimePoolManager.nextMillis(
+                    `type` = job.`type`,
+                    configInterval * 1000
+                  )
+
+                log.debug(job.toKey + " is PAUSED so rescheduling for " + executionDelay + "ms")
+                val newJob = JobManager.updateJob(job, executionDelay)
+                SchedulerManager.schedule(newJob, callbacks)
               }
             }
           }

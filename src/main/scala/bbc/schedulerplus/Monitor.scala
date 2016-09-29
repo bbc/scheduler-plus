@@ -6,8 +6,11 @@ import akka.actor.{Actor, Props}
 import akka.event.Logging
 import bbc.AppContext
 import bbc.schedulerplus.client.Callbacks
+import bbc.schedulerplus.domain.JobRequest
 import bbc.schedulerplus.timing.ExecutionTimePoolManager
 import com.typesafe.config.ConfigFactory
+
+import scala.concurrent.Future
 
 /**
   * Manages data syncing of objects
@@ -34,13 +37,13 @@ object Monitor {
 
     def receive = {
       case "find-jobs" => {
-        log.debug("Running job scheduler...")
+        log.debug("Running job scheduler for [" + callbacks.keys.mkString(", ") + "]")
 
-        // TODO THIS SHOULD BE FROM KEYS
-        val jobRequestsToRun = JobManager.findJobRequestsToRun("hello_world")
+        val jobRequestsToRun = for (key <- callbacks.keys) yield JobManager.findJobRequestsToRun(key)
 
-        jobRequestsToRun onComplete {
-          case Success(jobRequests) => {
+        Future.sequence(jobRequestsToRun) onComplete {
+          case Success(jrs) => {
+            val jobRequests: List[JobRequest] = jrs.flatten
             log.debug("Found " + jobRequests.size + " job requests to run")
 
             for(jobRequest <- jobRequests) {

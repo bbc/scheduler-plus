@@ -16,11 +16,15 @@ object HelloWorldCallbacks extends Callbacks {
     job.`type` match {
       case "hello_world" => () => {
         log.debug("Hello, World!")
-
+        CallbackResponse(lifetimeInMillis = 10000)
+      }
+      case "hello_patrick"  => () => {
+        log.debug("Hello, Patrick!")
+        // stuff
         CallbackResponse(lifetimeInMillis = 10000)
       }
     }
   }
 
-  def keys: scala.List[String] = List("hello_world")
+  def keys: scala.List[String] = List("hello_world", "hello_patrick")
 }
