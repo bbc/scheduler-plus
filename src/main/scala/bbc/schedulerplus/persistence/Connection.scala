@@ -20,10 +20,13 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.persistence
 
-import akka.actor.ActorSystem
+import redis.RedisClient
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * Encloses a connection to Redis for dependency injection
+  */
+trait Connection {
+  val redis: RedisClient
 }

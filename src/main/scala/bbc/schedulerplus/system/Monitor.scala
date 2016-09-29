@@ -20,10 +20,37 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.system
 
-import akka.actor.ActorSystem
+import akka.actor.Props
+import akka.event.Logging
+import bbc.AppContext
+import bbc.schedulerplus.client.Callbacks
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * Manages data syncing of objects
+  */
+object Monitor {
+
+  val system = AppContext.akkaSystem
+  val log = Logging(system, getClass)
+
+  /**
+    * Entry-point to the manager which begins syncing of specified data
+    * @return true if the sync starts ok, false otherwise
+    */
+  def startScheduling(callbacks: Callbacks): Boolean = {
+    system.actorOf(Props(classOf[JobSchedulerActor], callbacks))
+    true
+  }
+
+  /**
+    * Entry-point to the manager which begins syncing of specified data
+    * @return true if the sync stops ok, false otherwise
+    */
+  def stopScheduling: Boolean = {
+
+    log.info("Stopping scheduler...")
+    true
+  }
 }

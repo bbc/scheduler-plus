@@ -20,10 +20,24 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.system
 
-import akka.actor.ActorSystem
+import bbc.schedulerplus.Job
+import bbc.schedulerplus.client.Callbacks
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+trait SchedulerManager {
+
+  /**
+    * Creates an anonymous function to make the actual calls to blur and insert into cache etc
+    * @param job
+    * @return
+    */
+  def createCallback(job: Job, callbacks: Callbacks):() => Unit
+
+  /**
+    * Schedule a job with callbacks to run in job.lifetimeInMills milliseconds
+    * @param job
+    * @param callbacks
+    */
+  def schedule(job: Job, callbacks: Callbacks): Unit
 }

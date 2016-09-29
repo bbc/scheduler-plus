@@ -20,10 +20,13 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.system
 
-import akka.actor.ActorSystem
+import bbc.schedulerplus.persistence.RedisCache
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * Manages the actual scheduling of jobs, creating an actor which will execute when the lifetimeInMillis elapses
+  */
+object RedisSchedulerManager extends SchedulerManager with SchedulerManagerEngine {
+  val cache = RedisCache
 }

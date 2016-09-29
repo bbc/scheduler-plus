@@ -20,10 +20,42 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus
 
-import akka.actor.ActorSystem
+import akka.util.ByteString
+import redis.ByteStringFormatter
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * Represents a job request which triggers a scheduled job
+  */
+case class Request(
+  id: String,
+  `type`: String,
+  status: String
+) { def toKey: String = { `type` + "_" + id } }
+
+object Request {
+  implicit val byteStringFormatter = new ByteStringFormatter[Request] {
+    def serialize(data: Request): ByteString = {
+      ByteString(
+        "id=" + data.id +
+        "|type=" + data.`type` +
+        "|status=" + data.status
+      )
+    }
+
+    def deserialize(bs: ByteString): Request = {
+      val r = bs.utf8String.split('|').toList
+
+      if (r.size == 3) {
+        Request(
+          id = r.filter(_.startsWith("id=")).head.split("=")(1),
+          `type` = r.filter(_.startsWith("type=")).head.split("=")(1),
+          status = r.filter(_.startsWith("status=")).head.split("=")(1)
+        )
+      } else {
+        throw new Exception("Request cannot be created with " + bs.utf8String)
+      }
+    }
+  }
 }

@@ -20,10 +20,40 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.system
 
-import akka.actor.ActorSystem
+import akka.actor.Actor
+import akka.event.Logging
+import bbc.AppContext
+import bbc.schedulerplus.Job
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+import scala.concurrent.duration._
+
+/**
+  * Akka Scheduler Actor which will execute the anonymous function 'callback()' after the job.lifetimeInMills has elapsed
+  */
+class JobRunnerActor(job: Job, callback: () => Unit) extends Actor {
+  import context.dispatcher
+
+  val tick = context.system.scheduler.scheduleOnce(
+    job.lifetimeInMillis milliseconds,
+    self,
+    "run-job"
+  )
+
+  val log = Logging(AppContext.akkaSystem, getClass)
+
+  // scalastyle:off
+  override def postStop() = tick.cancel()
+  // scalastyle:on
+
+  // scalastyle:off
+  def receive = {
+    // scalastyle:on
+    case "run-job" => {
+      log.debug("Running job runner for " + job.toKey + "  ...")
+
+      callback()
+    }
+  }
 }
