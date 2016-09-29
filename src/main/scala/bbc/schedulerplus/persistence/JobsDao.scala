@@ -1,12 +1,11 @@
-package bbc.persistence
-
-import akka.event.Logging
-import bbc.AppContext
-import bbc.persistence.sync.{Job, JobRequest}
-import bbc.domain.AppJsonProtocol
+package bbc.schedulerplus.persistence
 
 import scala.concurrent.Future
-import spray.json._
+import akka.event.Logging
+import bbc.AppContext
+import bbc.persistence.{OverwritingCacheFactory, RedisCache}
+import bbc.schedulerplus.domain.marshalling.AppJsonProtocol
+import bbc.schedulerplus.domain.{Job, JobRequest}
 
 /**
   * The data access object for jobs, providing an interface over the cache.
@@ -22,8 +21,8 @@ object JobsDao extends AppJsonProtocol {
 
   /**
     * Return the last part of a key, without the type prefix which the Redis library uses.
-    * @param key A String, such as bbc.persistence.sync.JobRequest:episode_summary_b070500j
-    * @return A String, such as episode_summary_b070500j
+    * @param key A String, such as bbc.schedulerplus.domain.JobRequest:the_job_type_123456
+    * @return A String, such as the_job_type_123456
     */
   private def stripKeyType(key: String): String = key.split(":").last
 
@@ -108,26 +107,26 @@ object JobsDao extends AppJsonProtocol {
   def jobRequest(key: String): Option[Future[JobRequest]] = jobRequestCache.get(key)
 
   /**
-    * Returns all of the job requests for a particular type, such as 'episode_summary'.
+    * Returns all of the job requests for a particular type, such as 'the_job_type'.
     * @param jobType
     * @return
     */
   def jobRequests(jobType: String): Future[List[JobRequest]] =
-  jobRequestsFromKeys(jobRequestKeys(s"bbc.persistence.sync.JobRequest:$jobType*"))
+  jobRequestsFromKeys(jobRequestKeys(s"bbc.schedulerplus.domain.JobRequest:$jobType*"))
 
   /**
-    * Returns a single Job given its key, such as 'episode_summary_b07lf5sf'
+    * Returns a single Job given its key, such as 'the_job_type_123456'
     * @param key
     * @return
     */
   def job(key: String): Option[Future[Job]] = jobCache.get(key)
 
   /**
-    * Returns all of the job requests for a particular type, such as 'episode_summary'.
+    * Returns all of the job requests for a particular type, such as 'the_job_type'.
     * @param jobType
     * @return
     */
-  def jobs(jobType: String): Future[List[Job]] = jobsFromKeys(jobKeys(s"bbc.persistence.sync.Job:$jobType*"))
+  def jobs(jobType: String): Future[List[Job]] = jobsFromKeys(jobKeys(s"bbc.schedulerplus.domain.Job:$jobType*"))
 }
 
 

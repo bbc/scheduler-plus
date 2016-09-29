@@ -1,24 +1,29 @@
-package bbc.persistence.sync
+package bbc.schedulerplus
 
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 import akka.actor.{Actor, Props}
 import akka.event.Logging
 import bbc.AppContext
-import bbc.scheduler.SchedulerManager
-
-import scala.util.{Failure, Success}
+import bbc.schedulerplus.client.Callbacks
+import bbc.schedulerplus.timing.ExecutionTimePoolManager
+import com.typesafe.config.ConfigFactory
 
 /**
   * Manages data syncing of objects
   */
-object SyncManager {
+object Monitor {
 
-  private class JobScheduler(callbacks: Callbacks) extends Actor {
+  private class JobSchedulerActor(callbacks: Callbacks) extends Actor {
+
+    lazy val config = ConfigFactory.load()
+    lazy val configInitialdelay = config.getInt("monitor.initial_delay_seconds")
+    lazy val configInterval = config.getInt("monitor.interval_seconds")
 
     import context.dispatcher
     val tick = context.system.scheduler.schedule(
-      initialDelay = 10 seconds,
-      interval = 15 seconds,
+      initialDelay = configInitialdelay seconds,
+      interval = configInterval seconds,
       receiver = self,
       message = "find-jobs"
     )
@@ -31,7 +36,8 @@ object SyncManager {
       case "find-jobs" => {
         log.debug("Running job scheduler...")
 
-        val jobRequestsToRun = JobManager.findJobRequestsToRun("episode_summary")
+        // TODO THIS SHOULD BE FROM KEYS
+        val jobRequestsToRun = JobManager.findJobRequestsToRun("hello_world")
 
         jobRequestsToRun onComplete {
           case Success(jobRequests) => {
@@ -59,7 +65,7 @@ object SyncManager {
     */
   def startScheduling(callbacks: Callbacks): Boolean = {
     log.info("Starting scheduler...")
-    system.actorOf(Props(classOf[JobScheduler], callbacks))
+    system.actorOf(Props(classOf[JobSchedulerActor], callbacks))
     true
   }
 

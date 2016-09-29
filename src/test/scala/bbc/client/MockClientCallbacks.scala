@@ -1,4 +1,7 @@
-package bbc.persistence.sync
+package bbc.client
+
+import bbc.schedulerplus.client.{CallbackResponse, Callbacks}
+import bbc.schedulerplus.domain.Job
 
 /**
   * Mock callbacks for testing

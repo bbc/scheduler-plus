@@ -1,14 +1,15 @@
-package bbc.persistence.sync
+package bbc.schedulerplus
 
+import scala.concurrent.duration._
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
+import bbc.client.MockClientCallbacks
 import org.scalatest._
-import scala.concurrent.duration._
 
 /**
   * TestKit for DataSyncActor
   */
-class DataSyncActorSpec extends TestKit(ActorSystem("testSystem"))
+class SchedulerPlusActorSpec extends TestKit(ActorSystem("testSystem"))
     with DefaultTimeout
     with ImplicitSender
     with WordSpecLike

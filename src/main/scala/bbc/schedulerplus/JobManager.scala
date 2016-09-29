@@ -1,12 +1,12 @@
-package bbc.persistence.sync
-
-import org.joda.time.DateTime
-import akka.event.Logging
-import bbc.AppContext
-import bbc.persistence.JobsDao
-import org.joda.time.format.{DateTimeFormat, ISODateTimeFormat}
+package bbc.schedulerplus
 
 import scala.concurrent.Future
+import akka.event.Logging
+import org.joda.time.DateTime
+import org.joda.time.format.{DateTimeFormat, ISODateTimeFormat}
+import bbc.AppContext
+import bbc.schedulerplus.domain.{Job, JobRequest}
+import bbc.schedulerplus.persistence.JobsDao
 
 /**
   * Manages all of the jobs
@@ -102,7 +102,7 @@ object JobManager {
 
   /**
     * Creates a Job object and also creates a job item in the cache with the key [jobRequest.`type` + "_" + jobRequest.id], such as
-    * the key episode_summary_b07lf5sf
+    * the key the_key_type_123456
     *
     * @param jobRequest
     * @return
@@ -142,8 +142,6 @@ object JobManager {
 
   def deleteJob(job: Job): Boolean = {
     JobsDao.deleteJob(key = job.toKey)
-
-    // todo check if ok
     true
   }
 }

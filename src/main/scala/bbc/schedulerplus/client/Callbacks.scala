@@ -1,4 +1,6 @@
-package bbc.persistence.sync
+package bbc.schedulerplus.client
+
+import bbc.schedulerplus.domain.Job
 
 /**
   * Represents callbacks for a particular job, based on the supplied key, which relates to a job type. The

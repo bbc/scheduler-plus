@@ -1,4 +1,4 @@
-package bbc.persistence.sync
+package bbc.schedulerplus.client
 
 /**
   * Represents the result of a client callback, used to return the lifetime of the result of the callback (when the

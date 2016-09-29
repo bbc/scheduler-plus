@@ -20,7 +20,7 @@ Firstly, to create your callback (the work you want to do) you'll need
 to extend the `Callbacks` trait, like:
 
 ```scala
-import bbc.persistence.sync.Callbacks
+import bbc.schedulerplus.client.Callbacks
 
 object HelloWorldCallbacks extends Callbacks {
   
@@ -90,7 +90,7 @@ SET bbc.persistence.sync.JobRequest:the_job_type_123456
 ```
 _(all on one line)_
 
-This adds an item with the key `bbc.persistence.sync.JobRequest:the_job_type_123456` 
+This adds an item with the key `bbc.schedulerplus.domain.JobRequest:the_job_type_123456` 
 and the JSON value of:
 
 ```json

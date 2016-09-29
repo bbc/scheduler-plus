@@ -1,7 +1,6 @@
 package bbc
 
 import akka.actor.ActorSystem
-import com.typesafe.config.ConfigFactory
 
 object AppContext {
   val actorSystem = ActorSystem("scala-data-manager-lib")

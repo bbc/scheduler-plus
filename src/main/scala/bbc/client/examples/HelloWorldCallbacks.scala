@@ -1,7 +1,9 @@
-package bbc
+package bbc.client.examples
 
 import akka.event.Logging
-import bbc.persistence.sync.{CallbackResponse, Callbacks, Job}
+import bbc.AppContext
+import bbc.schedulerplus.client.{CallbackResponse, Callbacks}
+import bbc.schedulerplus.domain.Job
 
 /**
   * Mock callbacks for testing
@@ -12,7 +14,7 @@ object HelloWorldCallbacks extends Callbacks {
   def callbackFor(job: Job):() => CallbackResponse = {
 
     job.`type` match {
-      case "episode_summary" => () => {
+      case "hello_world" => () => {
         log.debug("Hello, World!")
 
         CallbackResponse(lifetimeInMillis = 10000)
@@ -20,5 +22,5 @@ object HelloWorldCallbacks extends Callbacks {
     }
   }
 
-  def keys: scala.List[String] = List("episode_summary")
+  def keys: scala.List[String] = List("hello_world")
 }

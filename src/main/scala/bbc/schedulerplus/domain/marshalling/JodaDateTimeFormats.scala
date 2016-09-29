@@ -1,9 +1,12 @@
-package bbc.domain.marshalling
+package bbc.schedulerplus.domain.marshalling
 
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import spray.json._
 
+/**
+  * Provides a formatter for Joda DateTime JSON parsing
+  */
 trait JodaDateTimeFormats {
 
   implicit object JodaDateTimeFormat extends JsonFormat[DateTime] {

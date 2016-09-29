@@ -1,10 +1,9 @@
 package bbc.persistence
 
-import bbc.AppContext
+import scala.concurrent.duration.Duration
 import spray.caching.Cache
 import spray.json.{JsonReader, JsonWriter}
-
-import scala.concurrent.duration.Duration
+import bbc.AppContext
 
 /**
   * Cache Factory which returns a spray compatible client for Redis.

@@ -1,6 +1,4 @@
-package bbc.persistence.sync
-
-import org.joda.time.DateTime
+package bbc.schedulerplus.timing
 
 object ExecutionTimePoolManager {
 

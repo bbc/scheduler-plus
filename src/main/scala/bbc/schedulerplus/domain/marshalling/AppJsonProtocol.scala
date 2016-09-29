@@ -1,8 +1,7 @@
-package bbc.domain
+package bbc.schedulerplus.domain.marshalling
 
-import bbc.domain.marshalling.JodaDateTimeFormats
-import bbc.persistence.sync.{Job, JobRequest}
-import spray.json.{DefaultJsonProtocol, JsonFormat, NullOptions, RootJsonFormat}
+import spray.json.{DefaultJsonProtocol, NullOptions}
+import bbc.schedulerplus.domain.{Job, JobRequest}
 
 /**
   * JSON format protocol for case classes

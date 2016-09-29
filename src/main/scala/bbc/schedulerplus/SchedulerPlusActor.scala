@@ -1,6 +1,7 @@
-package bbc.persistence.sync
+package bbc.schedulerplus
 
 import akka.actor.{Actor, ActorLogging}
+import bbc.schedulerplus.client.Callbacks
 
 /**
   * Receives callbacks on application startup to begin the scheduler for jobs we wish to run
@@ -10,12 +11,12 @@ class SchedulerPlusActor extends Actor with ActorLogging {
   /**
    * Start scheduler
    */
-  private def start(callbacks: Callbacks): Unit = SyncManager.startScheduling(callbacks)
+  private def start(callbacks: Callbacks): Unit = Monitor.startScheduling(callbacks)
 
   /**
    * Stop scheduler
    */
-  private def stop(): Unit = SyncManager.stopScheduling
+  private def stop(): Unit = Monitor.stopScheduling
 
   override def receive: PartialFunction[Any, Unit] = {
     case callbacks: Callbacks => {

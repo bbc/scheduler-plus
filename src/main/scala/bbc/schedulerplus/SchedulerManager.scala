@@ -1,10 +1,12 @@
-package bbc.scheduler
+package bbc.schedulerplus
 
 import akka.actor.Props
 import akka.event.Logging
 import bbc.AppContext
-import bbc.persistence.JobsDao
-import bbc.persistence.sync._
+import bbc.schedulerplus.client.Callbacks
+import bbc.schedulerplus.domain.Job
+import bbc.schedulerplus.persistence.JobsDao
+import bbc.schedulerplus.timing.ExecutionTimePoolManager
 
 /**
   * Manages the actual scheduling of jobs, creating an actor which will execute when the lifetimeInMillis elapses
