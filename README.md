@@ -63,9 +63,9 @@ to the time you ask for, with some entropy to spread system load and
 avoid 'lumping' of requests.
 
 Strictly-speaking you don't need the match statement and you could 
-return the anonymous function regardless of the `job.type` but 
+return the anonymous function regardless of the ``job.`type` `` but 
 it's good practice to check the job type first before you return a 
-callback for it (note that it has backticks around the type keyword. 
+callback for it (note that it has backticks around the type keyword). 
 You also must add the job type to the `keys` function list too so the 
 system knows you will deal with that particular job type, otherwise 
 Scheduler Plus will never deliver jobs to you, regardless of what 
@@ -73,7 +73,8 @@ callbacks you have in the `callbackFor` function. The anonymous function
 returned by `callbackFor` will be executed when Scheduler Plus finds a 
 matching job request.
 
-Then to start up the system you can yse an `ask`:
+Then to start up the system you can use an `ask`:
+
 
 ```scala
 val scheduler = system.actorOf(Props[SchedulerPlusActor], "scheduler-actor")
@@ -181,6 +182,11 @@ Scheduler Plus came from a subsystem in the Radio and Music Services
 'Blur - Business Layer for Radio' service called 'Scheduler'. Originally 
 designed to asynchronously request data and build items from upstream 
 services, it can actually be used to execute any code.
+
+## Caveat
+
+Scheduler Plus is a brand new component so under fairly heavy 
+development. Stay tuned!
 
 ![&#039;Man Plus&#039;](http://i.imgur.com/IrJFFJ4.jpg)
 _Lister from Red Dwarf as 'Man Plus'_
