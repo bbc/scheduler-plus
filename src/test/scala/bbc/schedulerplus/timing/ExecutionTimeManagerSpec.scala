@@ -20,10 +20,20 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.timing
 
-import akka.actor.ActorSystem
+import bbc.schedulerplus.Fixtures
+import org.specs2.mutable.Specification
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+object ExecutionTimeManagerSpec extends Specification with Fixtures {
+  "ExecutionTimeManager" should {
+    "return a time greater than or equal to the supplied lifetime" in {
+      val millis: Long = 10000
+      val nextMillis = ExecutionTimeManager.nextMillis("foo", millis)
+
+      nextMillis must beGreaterThanOrEqualTo(millis)
+
+      ok
+    }
+  }
 }

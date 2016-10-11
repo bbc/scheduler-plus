@@ -20,10 +20,21 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.persistence
 
-import akka.actor.ActorSystem
+import bbc.AppContext
+import redis.RedisClient
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * The data access object for jobs, providing an interface over the cache.
+  */
+object RedisCache extends Cache with CacheEngine {
+
+  implicit val akkaSystem = AppContext.akkaSystem
+
+  object RedisConnector extends Connection {
+    val redis = RedisClient()
+  }
+
+  val connection = RedisConnector
 }

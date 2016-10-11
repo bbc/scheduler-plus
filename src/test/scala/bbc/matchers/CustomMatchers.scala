@@ -20,10 +20,27 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.matchers
 
-import akka.actor.ActorSystem
+import org.joda.time.DateTime
+import org.specs2.matcher.{Expectable, Matcher, MatchersImplicits}
+import org.specs2.mutable.Specification
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * Contains custom matchers.
+  */
+trait CustomMatchers extends Specification with MatchersImplicits {
+
+  // scalastyle:off
+  /**
+    * Matches like `date1 must beNearTo(date2, 60000)` which will match if date2 is within ten minutes of date1
+    * @param date
+    * @param limit
+    * @return
+    */
+  def beNearTo(date: DateTime, limit: Long) = new Matcher[DateTime] {
+    def apply[D <: DateTime](e: Expectable[D]) =
+      result((e.value.getMillis - date.getMillis) < limit, "Dates are close", "Dates are far apart", e)
+  }
+  // scalastyle:on
 }

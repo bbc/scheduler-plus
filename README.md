@@ -1,14 +1,16 @@
 # Scheduler Plus
 
-Scheduler Plus is a workflow engine layer on Akka Scheduler and provides 
-a cloud-oriented and fault-tolerant mechanism for scheduling work that 
+Scheduler Plus is a workflow engine layer using 
+[Akka Scheduler](http://doc.akka.io/docs/akka/snapshot/java/scheduler.html) 
+and a [Redis](http://redis.io/) database instance that provides a 
+cloud-oriented and fault-tolerant mechanism for scheduling work that 
 must be repeated at intervals, such as obtaining an object from an 
 upstream datasource and adding it to a cache. You can then return the 
 lifetime of this object (for example the time from a `max-age` HTTP 
 response header for a service you have called) and the system will 
-re-execute the work again when that duration has elapsed, i.e. when 
-the item should no longer be cached. However, in practice, this could
-be any time and is just when your job should be next scheduled for.
+re-execute the work again when that duration has elapsed, i.e. when the 
+item should no longer be cached. However, in practice, this could be any 
+time and is just when your job should be next scheduled for.
 
 ## Using Scheduler Plus
 
@@ -20,7 +22,7 @@ Firstly, to create your callback (the work you want to do) you'll need
 to extend the `Callbacks` trait, like:
 
 ```scala
-import bbc.persistence.sync.Callbacks
+import bbc.schedulerplus.client.Callbacks
 
 object HelloWorldCallbacks extends Callbacks {
   
@@ -40,7 +42,7 @@ object HelloWorldCallbacks extends Callbacks {
 }
 ```
 
-You'll notice there is a `job.``type`` match` which then returns an 
+You'll notice there is a `job.``type`` match...` which then returns an 
 anonymous function, like:
 
 ```scala
@@ -52,13 +54,17 @@ anonymous function, like:
 }
 ```
 
-Strictly-speaking you don't need the match statement and you could 
-return the anonymous function directly but it's good practice to check 
-the job type first before you return a callback for it. You also must
-add the job type to the `keys` function return too so the system knows
-you will deal with that particular job type. 
+...which forms an enclosure around the work you want to perform. 
 
-Scheduler Plus will execute this anonymous function when the job runs.
+Strictly-speaking you don't need the match statement and you could 
+return the anonymous function regardless of the `job.``type`` ` but 
+it's good practice to check the job type first before you return a 
+callback for it. You also must add the job type to the `keys` function 
+list too so the system knows you will deal with that particular job 
+type, otherwise Scheduler Plus will never deliver jobs to you, 
+regardless of what callbacks you have in the `callbackFor` function. 
+The anonymous function returned by `callbackFor` will be executed when 
+Scheduler Plus finds a matching job request.
 
 Then to start up the system you look up the actor and send these 
 callbacks to it, using an `ask`:
@@ -85,12 +91,12 @@ that Scheduler Plus is listening to. This can be done, for Redis, by
 using:
 
 ```
-SET bbc.persistence.sync.JobRequest:the_job_type_123456 
+SET bbc.schedulerplus.JobRequest:the_job_type_123456 
 "{\"type\":\"the_job_type\",\"id\":\"123456\",\"status\":\"live\"}"
 ```
 _(all on one line)_
 
-This adds an item with the key `bbc.persistence.sync.JobRequest:the_job_type_123456` 
+This adds an item with the key `bbc.schedulerplus.JobRequest:the_job_type_123456` 
 and the JSON value of:
 
 ```json
@@ -127,7 +133,7 @@ Job requests can be set to any status at any time, by overwriting the
 job request in the cache, say with:
 
 ```
-SET bbc.persistence.sync.JobRequest:the_job_type_123456 
+SET bbc.schedulerplus.JobRequest:the_job_type_123456 
 "{\"type\":\"the_job_type\",\"id\":\"123456\",\"status\":\"paused\"}"
 ```
 _(all on one line)_
@@ -139,34 +145,39 @@ actually executes then it will act like a paused job and not actually
 execute. This is so that you can pause all jobs, including ones that are 
 scheduled.
 
-## Running Scheduler Plus
+## Running
 
-The library contains a 'Hello, World!' example, which (assuming you have 
-local Redis installed and running) you can run using:
-
-```
-sbt run
-```
-
-This is an example only and Scheduler Plus is intended as a library 
-module so it should be included in your sbt dependencies as:
+Scheduler Plus is published (currently locally) with:
 
 ```
-"bbc.rms" %% "scala-scheduler-plus-lib" % "X.X",
+sbt publish
 ```
 
-...and follow the above instructions to integrate it with your project.
+...which will build a jar to include in your project at 
+`{project_directory}/bbc/scheduler-plus_2.11-0.1-SNAPSHOT.jar` 
 
 Tests are run with:
 
 ```
-sbt run
+sbt test
 ```
 
-...and Scalastyle with:
+Scalastyle with:
 
 ```
 sbt scalastyle
+```
+
+Scoverage test coverage with:
+
+```
+sbt clean coverage test
+```
+
+Generate Scoverage test report with:
+
+```
+sbt coverageReport
 ```
 
 ## About Scheduler Plus

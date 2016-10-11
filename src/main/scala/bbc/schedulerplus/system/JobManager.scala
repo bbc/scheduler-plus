@@ -20,10 +20,45 @@
  * SOFTWARE.
  */
 
-package bbc
+package bbc.schedulerplus.system
 
-import akka.actor.ActorSystem
+import scala.concurrent.Future
+import bbc.schedulerplus.persistence.Cache
+import bbc.schedulerplus.{Job, Request}
 
-object AppContext {
-  val akkaSystem = ActorSystem()
+/**
+  * Represents the interface to a JobManager
+  */
+trait JobManager {
+  val cache: Cache
+
+  /**
+    * Find all of the current Requests that should be run. Looks for a
+    * @return
+    */
+  def findRequestsToRun(jobType: String): Future[Seq[Request]]
+
+  /**
+    * Creates a Job object and also creates a job item in the cache with the key [jobRequest.`type` + "_" + jobRequest.id], such as
+    * the key the_key_type_123456
+    *
+    * @param jobRequest
+    * @return
+    */
+  def createJob(jobRequest: Request, lifetimeInMillis: Long): Job
+
+  /**
+    * Updates a job by replacing it with one with a new createdAt timestamp and
+    * @param job
+    * @param lifetimeInMillis
+    * @return
+    */
+  def updateJob(job: Job, lifetimeInMillis: Long): Job
+
+  /**
+    * Removes a job from the cache by its key
+    * @param job
+    * @return
+    */
+  def deleteJob(job: Job): Boolean
 }
