@@ -24,7 +24,7 @@ to extend the `Callbacks` trait, like:
 ```scala
 import bbc.schedulerplus.client.Callbacks
 
-object HelloWorldCallbacks extends Callbacks {
+object TheCallbacks extends Callbacks {
   
   def callbackFor(job: Job):() => CallbackResponse = {
 
@@ -32,8 +32,10 @@ object HelloWorldCallbacks extends Callbacks {
       case "the_job_type" => () => {
         
         // do your work here
-
-        CallbackResponse(lifetimeInMillis = 10000)
+        
+        val someTimeInMillis = 10000
+        
+        CallbackResponse(lifetimeInMillis = someTimeInMillis)
       }
     }
   }
@@ -42,7 +44,7 @@ object HelloWorldCallbacks extends Callbacks {
 }
 ```
 
-You'll notice there is a `job.``type`` match...` which then returns an 
+You'll notice there is a ``job.`type` `` match... which returns an 
 anonymous function, like:
 
 ```scala
@@ -54,30 +56,34 @@ anonymous function, like:
 }
 ```
 
-...which forms an enclosure around the work you want to perform. 
+...which forms an enclosure around the work you want to perform and 
+returns a `CallbackResponse` which contains a `lifetimeInMillis` which
+is when you'd like this job to run again. In practice the job runs near
+to the time you ask for, with some entropy to spread system load and
+avoid 'lumping' of requests.
 
 Strictly-speaking you don't need the match statement and you could 
-return the anonymous function regardless of the `job.``type`` ` but 
+return the anonymous function regardless of the `job.type` but 
 it's good practice to check the job type first before you return a 
-callback for it. You also must add the job type to the `keys` function 
-list too so the system knows you will deal with that particular job 
-type, otherwise Scheduler Plus will never deliver jobs to you, 
-regardless of what callbacks you have in the `callbackFor` function. 
-The anonymous function returned by `callbackFor` will be executed when 
-Scheduler Plus finds a matching job request.
+callback for it (note that it has backticks around the type keyword. 
+You also must add the job type to the `keys` function list too so the 
+system knows you will deal with that particular job type, otherwise 
+Scheduler Plus will never deliver jobs to you, regardless of what 
+callbacks you have in the `callbackFor` function. The anonymous function 
+returned by `callbackFor` will be executed when Scheduler Plus finds a 
+matching job request.
 
-Then to start up the system you look up the actor and send these 
-callbacks to it, using an `ask`:
+Then to start up the system you can yse an `ask`:
 
 ```scala
 val scheduler = system.actorOf(Props[SchedulerPlusActor], "scheduler-actor")
-val response = scheduler ? HelloWorldCallbacks
+val response = scheduler ? TheCallbacks
 ```
 
-...or, if you want to fire-and-forget, using a `tell`:
+...or, if you don't want to know the response, using a `tell`:
 
 ```scala
-system.actorOf(Props[SchedulerPlusActor], "scheduler-actor") ! HelloWorldCallbacks
+system.actorOf(Props[SchedulerPlusActor], "scheduler-actor") ! TheCallbacks
 ```
 
 The system will then start up and monitor the cache for any job requests. 
@@ -87,63 +93,49 @@ cache for job requests.
 ## Creating Job Requests
 
 To actually run your task, a job request must be created in the cache 
-that Scheduler Plus is listening to. This can be done, for Redis, by 
-using:
+that Scheduler Plus is listening to. This can be done, in redis-cli for 
+example, by using:
 
 ```
-SET bbc.schedulerplus.JobRequest:the_job_type_123456 
-"{\"type\":\"the_job_type\",\"id\":\"123456\",\"status\":\"live\"}"
-```
-_(all on one line)_
-
-This adds an item with the key `bbc.schedulerplus.JobRequest:the_job_type_123456` 
-and the JSON value of:
-
-```json
-{
-	"type": "the_job_type",
-	"id": "123456",
-	"status": "live"
-}
+SET bbc.schedulerplus.request:the_job_type_123456 "id=123456|type=the_job_type|status=live"
 ```
 
-Soon, Scheduler Plus will find this job request and will start to 
-execute it. It will create a job in the cache with a similar key, which 
-is used to ensure the job isn't lost if the system crashes and also that 
-only one Scheduler Plus instance is running this particular job. 
+...or your code could add this message to the cache to trigger a job.
+
+Soon, Scheduler Plus will find this request and will schedule it. 
+It will create a job in the cache with a similar key, which is used to 
+ensure the job isn't lost if the system crashes and also that only one 
+Scheduler Plus instance is running this particular job. 
 
 When scheduling the job request, Scheduler Plus will look for a callback 
-(in your callbacks) for the `the_job_type` type and then execute that 
-callback. Your callback will then return a `CallbackResponse` with a 
-`lifetimeInMillis` and Scheduler Plus will re-schedule your task for as 
-close to that time as it can. Scheduler Plus may add some time onto the 
-actual execution time to spread system load.
+(in your callbacks) for the `the_job_type` type and store that in the 
+job to be executed when the job runs.
 
 ## Job Request Statuses
 
-Job requests can have the following statuses: `live`, `paused`, and 
-`cancelled.` Live jobs are executed and then re-scheduled to be executed 
-again. Paused jobs do not actually execute but are re-scheduled again. 
-Cancelled jobs are ignored. Cancelled jobs are equivalent to not having 
-jobs at all, but are explicit. In practice you'd probably just remove 
+Requests can have the following statuses: `live`, `paused`, and 
+`cancelled.` Live requests execute the callback then are re-scheduled 
+again. Paused requests' callbacks do not execute but the requests are 
+re-scheduled again. Cancelled jobs are ignored. Cancelled jobs are 
+equivalent to not having jobs at all, but are explicit and will remove 
+any matching job in the cache. In practice you'd probably just remove 
 the job request from the cache but the system will attempt to delete any 
-jobs relating to cancelled job requests which can help keep the cache tidy.
+jobs relating to cancelled job requests which can help keep the cache 
+tidy.
 
 Job requests can be set to any status at any time, by overwriting the 
 job request in the cache, say with:
 
 ```
-SET bbc.schedulerplus.JobRequest:the_job_type_123456 
-"{\"type\":\"the_job_type\",\"id\":\"123456\",\"status\":\"paused\"}"
+SET bbc.schedulerplus.request:the_job_type_123456 "id=123456|type=the_job_type|status=paused"
 ```
-_(all on one line)_
 
-If a job is currently scheduled but hasn't yet been executed, it may 
-have the status of `live` which would mean it would be executed. However 
-if the status was changed from `live` to `paused` before the job 
-actually executes then it will act like a paused job and not actually 
-execute. This is so that you can pause all jobs, including ones that are 
-scheduled.
+A request which has been scheduled but hasn't yet been executed, could
+have the status of `live`. However if the status was changed from `live` 
+to `paused` before the job callback actually executes then it will act 
+like a paused job and not actually execute. This is so that you can 
+pause requests, including ones that are scheduled and currently in 
+memory.
 
 ## Running
 
@@ -153,8 +145,11 @@ Scheduler Plus is published (currently locally) with:
 sbt publish
 ```
 
-...which will build a jar to include in your project at 
-`{project_directory}/bbc/scheduler-plus_2.11-0.1-SNAPSHOT.jar` 
+...which will build a jar to include in your project dependencies at:
+ 
+```
+{project_directory}/bbc/scheduler-plus_2.11-0.1-SNAPSHOT.jar
+```
 
 Tests are run with:
 
@@ -183,12 +178,9 @@ sbt coverageReport
 ## About Scheduler Plus
 
 Scheduler Plus came from a subsystem in the Radio and Music Services 
-'Blur - Business Layer for Radio' service. Originally designed to 
-asynchronously request data and build items from upstream services it 
-can actually be used to execute any task.  
-
-## Caveat 
-
-Scheduler Plus is currently in alpha mode. Email beth.anderson@bbc.co.uk
+'Blur - Business Layer for Radio' service called 'Scheduler'. Originally 
+designed to asynchronously request data and build items from upstream 
+services, it can actually be used to execute any code.
 
 ![&#039;Man Plus&#039;](http://i.imgur.com/IrJFFJ4.jpg)
+_Lister from Red Dwarf as 'Man Plus'_
