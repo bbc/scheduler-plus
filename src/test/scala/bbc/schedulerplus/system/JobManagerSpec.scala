@@ -30,6 +30,7 @@ import org.scalatest.time.{Millis, Seconds, Span}
 import org.specs2.mutable.Specification
 
 object JobManagerSpec extends Specification with Fixtures with ScalaFutures with CustomMatchers {
+
   // scalastyle:off
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   // scalastyle:on

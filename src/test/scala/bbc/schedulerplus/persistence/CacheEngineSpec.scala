@@ -24,9 +24,14 @@ package bbc.schedulerplus.persistence
 
 import bbc.schedulerplus.{Fixtures, Job, Request}
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.specs2.mutable.Specification
 
 object CacheEngineSpec extends Specification with ScalaFutures with Fixtures {
+
+  // scalastyle:off
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
+  // scalastyle:on
 
   import scala.concurrent.ExecutionContext.Implicits.global
 

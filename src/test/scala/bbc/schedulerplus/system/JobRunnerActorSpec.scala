@@ -29,6 +29,7 @@ import akka.testkit.{DefaultTimeout, ImplicitSender, TestActorRef, TestKit}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import org.scalatest.concurrent.ScalaFutures
 import bbc.schedulerplus.{Fixtures, Job}
+import org.scalatest.time.{Millis, Seconds, Span}
 
 class JobRunnerActorSpec extends TestKit(ActorSystem("testSystem"))
   with DefaultTimeout
@@ -38,6 +39,10 @@ class JobRunnerActorSpec extends TestKit(ActorSystem("testSystem"))
   with BeforeAndAfterAll
   with ScalaFutures
   with Fixtures {
+
+  // scalastyle:off
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
+  // scalastyle:on
 
   "JobRunner" should {
     "execute a callback" in {
