@@ -35,16 +35,16 @@ import bbc.schedulerplus.timing.ExecutionTimeManager
 
 class JobSchedulerActor(callbacks: Callbacks) extends Actor {
 
-  val jobManager: JobManager = RedisJobManager
+  lazy val jobManager: JobManager = RedisJobManager
 
-  val schedulerManager: SchedulerManager = RedisSchedulerManager
+  lazy val schedulerManager: SchedulerManager = RedisSchedulerManager
 
   lazy val config = ConfigFactory.load()
   lazy val configInitialdelay = config.getInt("monitor.initial_delay_seconds")
   lazy val configInterval = config.getInt("monitor.interval_seconds")
 
   import context.dispatcher
-  val tick = context.system.scheduler.schedule(
+  lazy val tick = context.system.scheduler.schedule(
     initialDelay = configInitialdelay seconds,
     interval = configInterval seconds,
     receiver = self,

@@ -49,7 +49,6 @@ class JobRunnerActorSpec extends TestKit(ActorSystem("testSystem"))
       var sideEffectCount = 0
       val job = Job("123", "test", timestampNow, 0)
 
-      // because we don't want to check the side-effect before it's happened, wrap in a promise/future latent execution
       val p = Promise[Unit]()
       val f = p.future
 

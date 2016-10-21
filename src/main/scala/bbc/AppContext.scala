@@ -25,5 +25,5 @@ package bbc
 import akka.actor.ActorSystem
 
 object AppContext {
-  val akkaSystem = ActorSystem()
+  implicit val akkaSystem = ActorSystem()
 }

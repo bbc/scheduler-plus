@@ -56,10 +56,10 @@ class JobSchedulerActorSpec extends TestKit(ActorSystem("testSystem"))
 
       val jobSchedulerActor = TestActorRef(Props(
         new JobSchedulerActor(callbacks) {
-          override val jobManager = mock[JobManager]
+          override lazy val jobManager = mock[JobManager]
           jobManager.findRequestsToRun(anyString) returns Future(Seq(helloWorldRequest))
 
-          override val schedulerManager = sm
+          override lazy val schedulerManager = sm
         }))
 
       within(1000 millis) {
@@ -78,10 +78,10 @@ class JobSchedulerActorSpec extends TestKit(ActorSystem("testSystem"))
 
       val jobSchedulerActor = TestActorRef(Props(
         new JobSchedulerActor(callbacks) {
-          override val jobManager = mock[JobManager]
+          override lazy val jobManager = mock[JobManager]
           jobManager.findRequestsToRun(anyString) returns Future.failed(new Exception("mock"))
 
-          override val schedulerManager = sm
+          override lazy val schedulerManager = sm
         }))
 
       within(1000 millis) {
