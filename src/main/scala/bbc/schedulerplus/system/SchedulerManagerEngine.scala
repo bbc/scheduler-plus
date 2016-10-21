@@ -35,9 +35,8 @@ import com.typesafe.config.ConfigFactory
   * Provides the implementation of scheduling
   */
 trait SchedulerManagerEngine {
-  val system = AppContext.akkaSystem
-  val log = Logging(system, getClass)
-
+  lazy val system = AppContext.akkaSystem
+  lazy val log = Logging(system, getClass)
   lazy val config = ConfigFactory.load()
   lazy val configInterval = config.getInt("monitor.interval_seconds")
 
