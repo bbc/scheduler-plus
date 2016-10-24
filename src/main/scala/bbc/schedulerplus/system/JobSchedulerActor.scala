@@ -44,7 +44,7 @@ class JobSchedulerActor(callbacks: Callbacks) extends Actor {
   lazy val configInterval = config.getInt("monitor.interval_seconds")
 
   import context.dispatcher
-  lazy val tick = context.system.scheduler.schedule(
+  val tick = context.system.scheduler.schedule(
     initialDelay = configInitialdelay seconds,
     interval = configInterval seconds,
     receiver = self,
