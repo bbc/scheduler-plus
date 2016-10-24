@@ -35,7 +35,7 @@ import scala.concurrent.duration._
 class JobRunnerActor(job: Job, callback: () => Unit) extends Actor {
   import context.dispatcher
 
-  lazy val tick = context.system.scheduler.scheduleOnce(
+  val tick = context.system.scheduler.scheduleOnce(
     job.lifetimeInMillis milliseconds,
     self,
     "run-job"
