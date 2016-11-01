@@ -28,30 +28,35 @@ import scala.util.{Failure, Success}
 import akka.actor.Actor
 import akka.event.Logging
 import com.typesafe.config.ConfigFactory
-import bbc.AppContext
+import bbc.SchedulerPlusContext
+import bbc.config.ConfigPlus
 import bbc.schedulerplus.Request
 import bbc.schedulerplus.client.Callbacks
 import bbc.schedulerplus.timing.ExecutionTimeManager
 
 class JobSchedulerActor(callbacks: Callbacks) extends Actor {
 
-  lazy val jobManager: JobManager = RedisJobManager
+  import ConfigPlus._
 
+  lazy val jobManager: JobManager = RedisJobManager
   lazy val schedulerManager: SchedulerManager = RedisSchedulerManager
 
   lazy val config = ConfigFactory.load()
-  lazy val configInitialdelay = config.getInt("monitor.initial_delay_seconds")
-  lazy val configInterval = config.getInt("monitor.interval_seconds")
+
+  // scalastyle:off
+  lazy val configInitialDelay = config.getIntOrElse("schedulerplus.monitor.initial_delay_seconds", 15)
+  lazy val configInterval = config.getIntOrElse("schedulerplus.monitor.interval_seconds", 30)
+  // scalastyle:on
 
   import context.dispatcher
   val tick = context.system.scheduler.schedule(
-    initialDelay = configInitialdelay seconds,
+    initialDelay = configInitialDelay seconds,
     interval = configInterval seconds,
     receiver = self,
     message = "find-jobs"
   )
 
-  val log = Logging(AppContext.akkaSystem, getClass)
+  val log = Logging(SchedulerPlusContext.akkaSystem, getClass)
 
   // scalastyle:off
   override def postStop() = tick.cancel()

@@ -74,36 +74,36 @@ class SchedulerManagerEngineSpec  extends Specification with ScalaFutures with F
     }
 
     "create a callback for a cancelled request" in {
-      object MockSchedulerManager extends SchedulerManagerEngine {
+      object MockCancelledSchedulerManager extends SchedulerManagerEngine {
         val cache = mock[Cache]
         cache.request(anyString) returns Future(Some(helloWorldCancelledRequest))
       }
 
-      val callback = MockSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
+      val callback = MockCancelledSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
       val callbackResult = callback()
 
       callbackResult shouldEqual((): Unit)
     }
 
     "create a callback for a paused request" in {
-      object MockSchedulerManager extends SchedulerManagerEngine {
+      object MockPausedSchedulerManager extends SchedulerManagerEngine {
         val cache = mock[Cache]
         cache.request(anyString) returns Future(Some(helloWorldPausedRequest))
       }
 
-      val callback = MockSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
+      val callback = MockPausedSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
       val callbackResult = callback()
 
       callbackResult shouldEqual((): Unit)
     }
 
     "throw an exception from the callback of an invalid request" in {
-      object MockSchedulerManager extends SchedulerManagerEngine {
+      object MockInvalidSchedulerManager extends SchedulerManagerEngine {
         val cache = mock[Cache]
         cache.request(anyString) returns Future(Some(helloWorldInvalidRequest))
       }
 
-      val callback = MockSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
+      val callback = MockInvalidSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
       val callbackResult = callback()
 
       // todo not executing
@@ -112,12 +112,12 @@ class SchedulerManagerEngineSpec  extends Specification with ScalaFutures with F
     }
 
     "handles no request for job" in {
-      object MockSchedulerManager extends SchedulerManagerEngine {
+      object MockNoneSchedulerManager extends SchedulerManagerEngine {
         val cache = mock[Cache]
         cache.request(anyString) returns Future(None)
       }
 
-      val callback = MockSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
+      val callback = MockNoneSchedulerManager.createCallback(helloWorldJob(timestampNow), MockClientCallbacks)
       val callbackResult = callback()
 
       callbackResult shouldEqual((): Unit)

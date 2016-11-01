@@ -138,6 +138,21 @@ like a paused job and not actually execute. This is so that you can
 pause requests, including ones that are scheduled and currently in 
 memory.
 
+## Configuration
+
+To adjust the initial delay before Scheduler Plus starts running or the 
+interval that Scheduler Plus will check for new jobs, create an config 
+file containing values like:
+ 
+ ```
+ schedulerplus {
+   monitor {
+     initial_delay_seconds = 15
+     interval_seconds = 30
+   }
+ }
+ ```
+
 ## Running
 
 Scheduler Plus is published (currently locally) with:

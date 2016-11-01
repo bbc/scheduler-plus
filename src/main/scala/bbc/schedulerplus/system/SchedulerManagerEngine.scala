@@ -24,7 +24,7 @@ package bbc.schedulerplus.system
 
 import akka.actor.Props
 import akka.event.Logging
-import bbc.AppContext
+import bbc.SchedulerPlusContext
 import bbc.schedulerplus.Job
 import bbc.schedulerplus.client.Callbacks
 import bbc.schedulerplus.persistence.{Cache, RedisCache}
@@ -35,7 +35,7 @@ import com.typesafe.config.ConfigFactory
   * Provides the implementation of scheduling
   */
 trait SchedulerManagerEngine {
-  lazy val system = AppContext.akkaSystem
+  lazy val system = SchedulerPlusContext.akkaSystem
   lazy val log = Logging(system, getClass)
   lazy val config = ConfigFactory.load()
   lazy val configInterval = config.getInt("monitor.interval_seconds")
