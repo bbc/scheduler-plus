@@ -24,7 +24,7 @@ package bbc.schedulerplus.system
 
 import akka.actor.Actor
 import akka.event.Logging
-import bbc.AppContext
+import bbc.SchedulerPlusContext
 import bbc.schedulerplus.Job
 
 import scala.concurrent.duration._
@@ -41,7 +41,7 @@ class JobRunnerActor(job: Job, callback: () => Unit) extends Actor {
     "run-job"
   )
 
-  val log = Logging(AppContext.akkaSystem, getClass)
+  val log = Logging(SchedulerPlusContext.akkaSystem, getClass)
 
   // scalastyle:off
   override def postStop() = tick.cancel()

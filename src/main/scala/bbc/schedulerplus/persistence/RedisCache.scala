@@ -22,7 +22,7 @@
 
 package bbc.schedulerplus.persistence
 
-import bbc.AppContext
+import bbc.SchedulerPlusContext
 import redis.RedisClient
 
 /**
@@ -30,7 +30,7 @@ import redis.RedisClient
   */
 object RedisCache extends Cache with CacheEngine {
 
-  implicit val akkaSystem = AppContext.akkaSystem
+  implicit val akkaSystem = SchedulerPlusContext.akkaSystem
 
   object RedisConnector extends Connection {
     val redis = RedisClient()

@@ -24,7 +24,7 @@ package bbc.schedulerplus.system
 
 import akka.actor.Props
 import akka.event.Logging
-import bbc.AppContext
+import bbc.SchedulerPlusContext
 import bbc.schedulerplus.client.Callbacks
 
 /**
@@ -32,7 +32,7 @@ import bbc.schedulerplus.client.Callbacks
   */
 object Monitor {
 
-  val system = AppContext.akkaSystem
+  val system = SchedulerPlusContext.akkaSystem
   val log = Logging(system, getClass)
 
   /**

@@ -100,14 +100,15 @@ object JobManagerSpec extends Specification with Fixtures with ScalaFutures with
       object MockJobManager extends JobManagerEngine { val cache = mockCacheWithValidJob }
       val manager = MockJobManager
       val parser = ISODateTimeFormat.dateTimeNoMillis()
+      val timeNow = timestampNow
 
       val job = manager.createJob(helloWorldRequest, tenMinutes)
 
-      there was one(manager.cache).putJob("bbc.schedulerplus.job:hello_world_abc123", helloWorldJob(timestampNow))
+      there was one(manager.cache).putJob("bbc.schedulerplus.job:hello_world_abc123", helloWorldJob(timeNow))
 
       job.id shouldEqual helloWorldRequest.id
       job.lifetimeInMillis shouldEqual tenMinutes
-      parser.parseDateTime(job.createdAt) must beNearTo(parser.parseDateTime(timestampNow), tenMinutes)
+      parser.parseDateTime(job.createdAt) must beNearTo(parser.parseDateTime(timeNow), tenMinutes)
 
       ok
     }
@@ -116,14 +117,15 @@ object JobManagerSpec extends Specification with Fixtures with ScalaFutures with
       object MockJobManager extends JobManagerEngine { val cache = mockCacheWithOldJob }
       val manager = MockJobManager
       val parser = ISODateTimeFormat.dateTimeNoMillis()
+      val timeNow = timestampNow
 
-      val job = manager.updateJob(helloWorldJob(timestampNow), tenMinutes)
+      val job = manager.updateJob(helloWorldJob(timeNow), tenMinutes)
 
-      there was one(manager.cache).putJob("bbc.schedulerplus.job:hello_world_abc123", helloWorldJob(timestampNow))
+      there was one(manager.cache).putJob("bbc.schedulerplus.job:hello_world_abc123", helloWorldJob(timeNow))
 
       job.id shouldEqual helloWorldRequest.id
       job.lifetimeInMillis shouldEqual tenMinutes
-      parser.parseDateTime(job.createdAt) must beNearTo(parser.parseDateTime(timestampNow), tenMinutes)
+      parser.parseDateTime(job.createdAt) must beNearTo(parser.parseDateTime(timeNow), tenMinutes)
 
       ok
     }
