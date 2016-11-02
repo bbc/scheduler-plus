@@ -65,30 +65,30 @@ trait SchedulerManagerEngine {
                 val executionDelay =
                   ExecutionTimeManager.nextMillis(`type` = job.`type`, lifetimeInMillis = response.lifetimeInMillis)
 
-                log.debug(job.toKey + " is LIVE so running and rescheduling for " + executionDelay + "ms")
+                log.info(s"${job.toKey} is LIVE so running and rescheduling for $executionDelay ms")
                 val newJob = RedisJobManager.updateJob(job, executionDelay)
                 RedisSchedulerManager.schedule(newJob, callbacks)
               }
               case "cancelled" => {
-                log.debug(job.toKey + " is CANCELLED so ignoring")
+                log.info(s"${job.toKey} is CANCELLED so ignoring")
                 RedisJobManager.deleteJob(job)
               }
               case "paused" => {
                 // pause this for at least one polling cycle, avoids 'paused job thrashing'.
                 val executionDelay = ExecutionTimeManager.nextMillis(`type` = job.`type`, configInterval * 1000)
 
-                log.debug(job.toKey + " is PAUSED so rescheduling for " + executionDelay + "ms")
+                log.info(s"${job.toKey} is PAUSED so rescheduling for $executionDelay ms")
                 val newJob = RedisJobManager.updateJob(job, executionDelay)
                 RedisSchedulerManager.schedule(newJob, callbacks)
               }
               case _ => {
                 log.error(req.toKey + " has unknown status of " + req.status)
-                throw new Exception(req.toKey + " has unknown status of " + req.status)
+                throw new Exception(s"${req.toKey} has unknown status of ${req.status}")
               }
             }
           }
           case None => {
-            log.debug("Job request supplied for job " + job.id + " is not supported.")
+            log.info(s"Job request for job ${job.id} not found.")
           }
         }
       }

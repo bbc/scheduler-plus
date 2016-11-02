@@ -51,7 +51,7 @@ class SchedulerPlusActor extends Actor with ActorLogging {
       sender ! "STOPPING"
     }
     case message: Any => {
-      log.info(message.getClass.getName + " isn't handled by " + this.getClass.getSimpleName)
+      log.info(s"${message.getClass.getSimpleName} isn't handled by Scheduler Plus")
       sender ! "FAILED"
     }
   }

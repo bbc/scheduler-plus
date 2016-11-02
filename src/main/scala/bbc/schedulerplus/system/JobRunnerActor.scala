@@ -51,7 +51,7 @@ class JobRunnerActor(job: Job, callback: () => Unit) extends Actor {
   def receive = {
     // scalastyle:on
     case "run-job" => {
-      log.debug("Running job runner for " + job.toKey + "  ...")
+      log.info(s"Running job runner for ${job.toKey}...")
 
       callback()
     }

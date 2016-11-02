@@ -35,7 +35,7 @@ trait Callbacks {
     *
     * For example, the callback for the "expensive_task" key might be:
     * () => {
-    *   log.info("Running expensive task for job " + job.toKey + "...")
+    *   log.info(s"Running expensive task for job ${job.toKey}...")
     *   val millisToRunAgain = ExpensiveThing.runExpensiveTask(true)
     *
     *   CallbackResponse(lifetimeInMillis = millisToRunAgain)
