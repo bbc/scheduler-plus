@@ -22,18 +22,33 @@
 
 package bbc.schedulerplus.persistence
 
-import bbc.SchedulerPlusContext
 import redis.RedisClient
+import com.typesafe.config.ConfigFactory
+import bbc.SchedulerPlusContext
+import bbc.config.ConfigPlus
 
 /**
   * The data access object for jobs, providing an interface over the cache.
   */
 object RedisCache extends Cache with CacheEngine {
 
+  import ConfigPlus._
+
   implicit val akkaSystem = SchedulerPlusContext.akkaSystem
 
+  lazy val config = ConfigFactory.load()
+
+  val defaultHost = "localhost"
+  val defaultPort = 6379
+
+  lazy val host = config.getStringOrElse("schedulerplus.cache.host", defaultHost)
+  lazy val port = config.getIntOrElse("schedulerplus.cache.port", defaultPort)
+
   object RedisConnector extends Connection {
-    val redis = RedisClient()
+    val redis = RedisClient(
+      host = host,
+      port = port
+    )
   }
 
   val connection = RedisConnector

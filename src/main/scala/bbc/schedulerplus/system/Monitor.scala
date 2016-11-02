@@ -40,6 +40,7 @@ object Monitor {
     * @return true if the sync starts ok, false otherwise
     */
   def startScheduling(callbacks: Callbacks): Boolean = {
+    log.info("Starting Scheduler Plus...")
     system.actorOf(Props(classOf[JobSchedulerActor], callbacks))
     true
   }
@@ -49,8 +50,7 @@ object Monitor {
     * @return true if the sync stops ok, false otherwise
     */
   def stopScheduling: Boolean = {
-
-    log.info("Stopping scheduler...")
+    log.info("Stopping Scheduler Plus...")
     true
   }
 }

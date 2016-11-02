@@ -150,6 +150,11 @@ file containing values like:
      initial_delay_seconds = 15
      interval_seconds = 30
    }
+   
+   cache {
+     host = localhost
+     port = 6379
+   }
  }
  ```
 

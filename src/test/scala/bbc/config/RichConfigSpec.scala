@@ -31,18 +31,32 @@ import org.specs2.mutable.Specification
 object RichConfigSpec extends Specification {
 
   import ConfigPlus._
-  val config = ConfigFactory.parseString(("number=6"))
+
+  val integerConfig = ConfigFactory.parseString(("number=6"))
+  val stringConfig = ConfigFactory.parseString(("name=six"))
 
   "RichConfig" should {
-    "return the orElse if an item doesn't exist" in {
-      val orElse = config.getIntOrElse("foo", -1)
+    "return the orElse if an integer doesn't exist" in {
+      val orElse = integerConfig.getIntOrElse("foo", -1)
       orElse mustEqual -1
       ok
     }
 
-    "return the value if an item exists" in {
-      val value = config.getIntOrElse("number", -1)
+    "return the value if an integer exists" in {
+      val value = integerConfig.getIntOrElse("number", -1)
       value mustEqual 6
+      ok
+    }
+
+    "return the orElse if a string doesn't exist" in {
+      val orElse = stringConfig.getStringOrElse("foo", "bar")
+      orElse mustEqual "bar"
+      ok
+    }
+
+    "return the value if a string exists" in {
+      val value = stringConfig.getStringOrElse("name", "unknown")
+      value mustEqual "six"
       ok
     }
   }

@@ -24,14 +24,26 @@ package bbc.config
 
 import com.typesafe.config.Config
 
+/**
+  * Contains enriched methods for Typesafe Config
+  */
 object ConfigPlus {
 
-  implicit class RichConfig(config: Config){
-    def getIntOrElse(path: String, orElse: Int): Int =
+  implicit class RichConfig(config: Config) {
+    def getIntOrElse(path: String, orElse: Int): Int = {
       if (config.hasPath(path)) {
         config.getInt(path)
       } else {
         orElse
       }
+    }
+
+    def getStringOrElse(path: String, orElse: String): String = {
+      if (config.hasPath(path)) {
+        config.getString(path)
+      } else {
+        orElse
+      }
+    }
   }
 }
