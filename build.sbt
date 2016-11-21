@@ -15,7 +15,7 @@ lazy val schedulerplus = (project in file(".")).
         "org.joda"            %   "joda-convert"                      % "1.2",
         "org.slf4j"           %   "slf4j-api"                         % "1.6.4",
         "org.slf4j"           %   "slf4j-api"                         % "1.6.4",
-        "com.github.etaty"    %%  "rediscala"                         % "1.6.0",
+        "com.github.etaty"    %%  "rediscala"                         % "1.7.0",
         "com.typesafe.akka"   %%  "akka-actor"                        % "2.3.15",
         "com.typesafe.akka"   %%  "akka-testkit"                      % "2.4.10"    % "test",
         "org.scalatest"       %%  "scalatest"                         % "2.2.1"     % "test",
